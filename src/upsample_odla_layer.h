@@ -1,5 +1,5 @@
-#ifndef UPSAMPLE_DLA_LAYER_H
-#define UPSAMPLE_DLA_LAYER_H
+#ifndef UPSAMPLE_ODLA_LAYER_H
+#define UPSAMPLE_ODLA_LAYER_H
 #include "darknet.h"
 
 #define ATOMIC_CUBE 32

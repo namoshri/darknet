@@ -31,9 +31,11 @@ converter_layer make_converter_layer(int batch, int w, int h, int c,
 
 void convert_nchw_to_nhwc(uint8_t *in, int w, int h, int c, uint8_t *out)
 {
-    for (int i = 0; i < c; i++) {
-        for (int j = 0; j < h; j++) {
-            for (int k = 0; k < w; k++) {
+    int i, j, k;
+
+    for (i = 0; i < c; i++) {
+        for (j = 0; j < h; j++) {
+            for (k = 0; k < w; k++) {
                 out[j*w*c + c*k + i] = in[w*h*i + w*j + k];
             }
         }
@@ -42,9 +44,11 @@ void convert_nchw_to_nhwc(uint8_t *in, int w, int h, int c, uint8_t *out)
 
 void convert_fd_to_nchw(float *in, int w, int h, int c, float *out)
 {
-    for (int i = 0; i < c; i++) {
-        for (int j = 0; j < h; j++) {
-            for (int k = 0; k < w; k++) {
+    int i, j, k;
+
+    for (i = 0; i < c; i++) {
+        for (j = 0; j < h; j++) {
+            for (k = 0; k < w; k++) {
                 out[w*h*i + w*j + k] = in[w*32*h*(i/32) + w*32*j + i];
             }
         }
@@ -54,13 +58,14 @@ void convert_fd_to_nchw(float *in, int w, int h, int c, float *out)
 static void odla_dump_image_data(uint8_t *data, int w, int h, int c)
 {
     FILE *fp;
+    int i, j, k;
 
     fp = fopen("image_input.txt", "w");
 
     fprintf(fp, "blobs {\n");
-    for (int i = 0; i < c; i++) {
-        for (int j = 0; j < h; j++) {
-            for (int k = 0; k < w; k++) {
+    for (i = 0; i < c; i++) {
+        for (j = 0; j < h; j++) {
+            for (k = 0; k < w; k++) {
                 fprintf(fp, "  double_data: %u\n", data[w*h*i + w*j + k]);
             }
         }

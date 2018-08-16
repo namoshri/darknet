@@ -25,6 +25,7 @@ extern int odla_output_size(void *runtime, int index);
 static void odla_dump_data(const char *filename, int8_t *data, int w, int h, int c)
 {
     FILE *fp;
+    int i, j, k;
 
     fp = fopen(filename, "w");
 
@@ -32,9 +33,9 @@ static void odla_dump_data(const char *filename, int8_t *data, int w, int h, int
     unsigned int surface_stride = line_stride * h;
 
     fprintf(fp, "blobs {\n");
-    for (int i = 0; i < c; i++) {
-        for (int j = 0; j < h; j++) {
-            for (int k = 0; k < w; k++) {
+    for (i = 0; i < c; i++) {
+        for (j = 0; j < h; j++) {
+            for (k = 0; k < w; k++) {
                 int surface_index = i / 32;
                 fprintf(fp, "  double_data: %d\n", data[surface_stride*surface_index + line_stride*j + 32*k + i%32]);
             }
@@ -118,6 +119,7 @@ void resize_odla_layer(layer *l, int w, int h)
 void forward_odla_layer(const layer l, network net)
 {
     int8_t *input = (int8_t *)l.input_tensors[l.input_tensor].buffer;
+    int i;
 
     fprintf(stderr, "copying input to tensor index %d\n", l.input_tensor);
 
@@ -139,7 +141,7 @@ void forward_odla_layer(const layer l, network net)
     fprintf(stderr, "%s %d: Executing in ODLA... \n", __func__, __LINE__);
     odla_execute(l.odla_runtime, l.odla_instance);
 
-    for (int i = 0; i < l.num_output; i++) {
+    for (i = 0; i < l.num_output; i++) {
         char filename[80];
         snprintf(filename, sizeof(filename), "output_%02d_%02d.dimg", l.layer_index, i);
         odla_dump_data(filename, (int8_t *)l.output_tensors[i].buffer, l.output_tensors[i].w, l.output_tensors[i].h, l.output_tensors[i].c);
